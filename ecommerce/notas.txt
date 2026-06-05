@@ -1,0 +1,190 @@
+shopConnect eCommerce – Contexto y Microservicios
+ Contexto del Sistema
+
+ShopConnect es una plataforma de eCommerce que vende productos físicos en línea.
+Los clientes pueden:
+
+Navegar el catálogo
+Registrarse
+Realizar pedidos
+Pagar
+Hacer seguimiento
+
+El sistema se divide en 5 microservicios independientes, cada uno con su propia base de datos.
+
+ 1. ms-productos (:8081)
+ Situación
+
+La tienda necesita un catálogo organizado por categorías y marcas, con imágenes.
+
+ Reglas del Servicio
+R1: SKU único por producto
+R2: Categoría y marca deben existir
+R3: Stock no puede ser negativo
+R4: Producto pertenece a una categoría y marca
+R5: Imágenes asociadas a producto
+R6: Filtrar productos por categoría, marca o nombre
+ 2. ms-usuarios (:8082)
+ Situación
+
+Los clientes deben registrarse para comprar.
+
+Reglas del Servicio
+R1: Email único
+R2: Cliente/Admin deben existir en BD antes de crear usuario
+R3: Usuario puede tener múltiples direcciones
+R4: Eliminación en cascada de direcciones
+R5: Login por email
+R6: No crear usuario si rol no existe
+ 3. ms-pedidos (:8083)
+ Situación
+
+Clientes seleccionan productos y generan pedidos.
+
+ Reglas del Servicio
+R1: usuarioId y productoId son Long (cross-MS)
+R2: Estado inicial = PENDIENTE
+R3: Total = suma de detalles
+R4: Detalles referencian productos
+R5: Estados: PENDIENTE → CONFIRMADO → ENVIADO → ENTREGADO/CANCELADO
+R6: Validar usuario (sin llamar otro MS)
+ 4. ms-inventario (:8084)
+ Situación
+
+Controlar stock y movimientos.
+
+ Reglas del Servicio
+R1: productoId es Long
+R2: Un solo registro de inventario por producto
+R3: Movimientos:
+ENTRADA suma stock
+SALIDA resta
+AJUSTE reemplaza
+R4: Salida usa stock actual
+R5: Movimientos registrados
+R6: Alertas de stock mínimo
+ 5. ms-pagos (:8085)
+ Situación
+
+Cada pedido debe tener un pago.
+
+ Reglas del Servicio
+R1: pedidoId es Long
+R2: Método de pago debe existir
+R3: Estado inicial = PENDIENTE
+R4: Crear pago genera transacción inicial
+R5: Aprobar pago cambia estado
+R6: Buscar pagos por pedido
+Capas por Microservicio
+ ms-productos
+Modelos: Categoria, Marca, Producto, ImagenProducto
+Repository:
+findByCategoriaId
+findByMarcaId
+existsBySku
+findByNombreContaining
+Service:
+crear(): valida SKU
+agregarImagen()
+Controller:
+POST /?categoriaId=&marcaId=
+GET /?nombre=
+POST /{id}/imagenes
+ ms-usuarios
+Modelos: RolUsuario, Usuario, Direccion
+Repository:
+findByEmail
+existsByEmail
+findByRolId
+Service:
+crear(): valida email único
+agregarDireccion()
+Controller:
+POST /?rolId=
+GET /?email=
+POST /{id}/direcciones
+ ms-pedidos
+Modelos: EstadoPedido, Pedido, DetallePedido
+Repository:
+findByUsuarioId
+findByEstadoId
+Service:
+crear(): calcula total
+cambiarEstado()
+Controller:
+POST /?estadoId=
+GET /?usuarioId=
+PATCH /{id}/estado?estadoId=
+ ms-inventario
+Modelos: Inventario, MovimientoInventario
+Repository:
+findByProductoId
+existsByProductoId
+Service:
+registrar(): valida stock
+Controller:
+POST /
+POST /{id}/movimientos
+GET /producto/{productoId}
+ ms-pagos
+Modelos: MetodoPago, Pago
+Repository:
+findByPedidoId
+findByEstado
+Service:
+procesar()
+actualizarEstado()
+Controller:
+POST /?metodoId=
+PATCH /{id}/estado
+GET /?pedidoId=
+Entidades JPA por Microservicio
+ ms-productos
+Categoria: id, nombre, descripcion, activo
+Marca: id, nombre, paisOrigen, logoUrl
+Producto:
+id, nombre, precio, stock, sku
+categoria (ManyToOne)
+ImagenProducto:
+id, url, orden, principal
+producto (ManyToOne)
+ ms-usuarios
+RolUsuario: id, nombre, descripcion
+Usuario:
+id, nombre, email, password, activo
+rol (ManyToOne)
+Direccion:
+id, calle, ciudad, region
+usuario (ManyToOne)
+ ms-pedidos
+EstadoPedido: id, nombre, descripcion
+Pedido:
+id, fechaPedido, total, usuarioId
+estado (ManyToOne)
+DetallePedido:
+id, cantidad, precioUnit, productoId
+pedido (ManyToOne)
+ ms-inventario
+Inventario:
+id, productoId, stockActual, stockMinimo
+MovimientoInv:
+id, tipo, cantidad
+inventario (ManyToOne)
+ ms-pagos
+MetodoPago: id, nombre, activo
+Pago:
+id, monto, pedidoId
+metodoPago (ManyToOne)
+Nota importante
+productoId, usuarioId, pedidoId son referencias entre microservicios
+No hay claves foráneas entre bases de datos
+clase 1:--->
+Crear 5 proyectos Spring Boot + TODAS las entidades @Entity con relaciones JPA
+clase 2:-->
+Repositories (JpaRepository) + Service con reglas de negocio + validaciones @Valid
+clase 3:-->
+Controllers REST con ResponseEntity + GlobalExceptionHandler
+clase 4:-->
+Dockerizar + docker-compose con Oracle
+clase 5:--->
+Comunicación entre microservicios (WebClient)
