@@ -1,6 +1,7 @@
 package com.connectshopp.productos.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,9 +58,9 @@ public class ProductoService {
         Producto producto = buscarPorId(productoId);
 
         ImagenProducto imagen = new ImagenProducto();
-        imagen.setUrl(request.url());
-        imagen.setOrden(request.orden() == null ? 0 : request.orden());
-        imagen.setPrincipal(Boolean.TRUE.equals(request.principal()));
+        imagen.setUrl(request.getUrl());
+        imagen.setOrden(Optional.ofNullable(request.getOrden()).orElse(0));
+        imagen.setPrincipal(Boolean.TRUE.equals(request.getPrincipal()));
 
         producto.agregarImagen(imagen);
         productoRepository.save(producto);

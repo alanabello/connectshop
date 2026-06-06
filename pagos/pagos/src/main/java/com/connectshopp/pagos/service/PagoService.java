@@ -1,5 +1,11 @@
 package com.connectshopp.pagos.service;
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.connectshopp.pagos.dto.CrearPagoRequest;
 import com.connectshopp.pagos.exception.BusinessException;
 import com.connectshopp.pagos.exception.ResourceNotFoundException;
@@ -8,10 +14,6 @@ import com.connectshopp.pagos.model.Pago;
 import com.connectshopp.pagos.model.TransaccionPago;
 import com.connectshopp.pagos.repository.MetodoPagoRepository;
 import com.connectshopp.pagos.repository.PagoRepository;
-import java.util.List;
-import java.util.Set;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PagoService {
@@ -29,7 +31,7 @@ public class PagoService {
 
     @Transactional
     public Pago procesar(Long metodoId, CrearPagoRequest request) {
-        if (request.pedidoId() <= 0) {
+        if (request.getPedidoId() <= 0) {
             throw new BusinessException("pedidoId debe ser mayor que cero");
         }
 
@@ -40,8 +42,8 @@ public class PagoService {
         }
 
         Pago pago = new Pago();
-        pago.setPedidoId(request.pedidoId());
-        pago.setMonto(request.monto());
+        pago.setPedidoId(request.getPedidoId());
+        pago.setMonto(request.getMonto());
         pago.setEstado(PENDIENTE);
         pago.setMetodoPago(metodo);
 

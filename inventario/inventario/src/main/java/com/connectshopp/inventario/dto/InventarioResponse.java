@@ -1,27 +1,29 @@
 package com.connectshopp.inventario.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
-public class CrearInventarioRequest {
-    @NotNull
-    @Positive
+public class InventarioResponse {
+    private Long id;
     private Long productoId;
-    @NotNull
-    @Min(0)
     private Integer stockActual;
-    @NotNull
-    @Min(0)
     private Integer stockMinimo;
+    private Boolean bajoStock;
 
-    public CrearInventarioRequest() {
+    public InventarioResponse() {
     }
 
-    public CrearInventarioRequest(@NotNull @Positive Long productoId, @NotNull @Min(0) Integer stockActual, @NotNull @Min(0) Integer stockMinimo) {
+    public InventarioResponse(Long id, Long productoId, Integer stockActual, Integer stockMinimo, Boolean bajoStock) {
+        this.id = id;
         this.productoId = productoId;
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
+        this.bajoStock = bajoStock;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getProductoId() {
@@ -46,5 +48,13 @@ public class CrearInventarioRequest {
 
     public void setStockMinimo(Integer stockMinimo) {
         this.stockMinimo = stockMinimo;
+    }
+
+    public Boolean getBajoStock() {
+        return bajoStock;
+    }
+
+    public void setBajoStock(Boolean bajoStock) {
+        this.bajoStock = bajoStock;
     }
 }

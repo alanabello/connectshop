@@ -1,22 +1,4 @@
 services:
-  oracle:
-    image: gvenzl/oracle-free:23-slim
-    container_name: shopconnect-oracle
-    ports:
-      - "1522:1521"
-    environment:
-      ORACLE_PASSWORD: admin123
-      APP_USER: APP
-      APP_USER_PASSWORD: app123
-    volumes:
-      - oracle-data:/opt/oracle/oradata
-      - ./oracle/init:/container-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "healthcheck.sh"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
   productos:
     build:
       context: ./productos/productos
@@ -25,13 +7,13 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: PRODUCTOS
-      SPRING_DATASOURCE_PASSWORD: productos123
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.OracleDialect
-    depends_on:
-      oracle:
-        condition: service_healthy
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:productosdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: 'true'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   usuarios:
     build:
@@ -41,13 +23,13 @@ services:
     ports:
       - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: USUARIOS
-      SPRING_DATASOURCE_PASSWORD: usuarios123
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.OracleDialect
-    depends_on:
-      oracle:
-        condition: service_healthy
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:usuariosdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: 'true'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   pedidos:
     build:
@@ -57,25 +39,22 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: PEDIDOS
-      SPRING_DATASOURCE_PASSWORD: pedidos123
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.OracleDialect
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:pedidosdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: 'true'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       USUARIOS_SERVICE_URL: http://usuarios:8082
       PRODUCTOS_SERVICE_URL: http://productos:8081
       INVENTARIO_SERVICE_URL: http://inventario:8084
       PAGOS_SERVICE_URL: http://pagos:8085
     depends_on:
-      oracle:
-        condition: service_healthy
-      usuarios:
-        condition: service_started
-      productos:
-        condition: service_started
-      inventario:
-        condition: service_started
-      pagos:
-        condition: service_started
+      - usuarios
+      - productos
+      - inventario
+      - pagos
 
   inventario:
     build:
@@ -85,13 +64,13 @@ services:
     ports:
       - "8084:8084"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: INVENTARIO
-      SPRING_DATASOURCE_PASSWORD: inventario123
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.OracleDialect
-    depends_on:
-      oracle:
-        condition: service_healthy
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:inventariodb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: 'true'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   pagos:
     build:
@@ -101,13 +80,10 @@ services:
     ports:
       - "8085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      SPRING_DATASOURCE_USERNAME: PAGOS
-      SPRING_DATASOURCE_PASSWORD: pagos123
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.OracleDialect
-    depends_on:
-      oracle:
-        condition: service_healthy
-
-volumes:
-  oracle-data:
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:pagosdb
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: 'true'
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update

@@ -1,5 +1,11 @@
 package com.connectshopp.inventario.service;
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.connectshopp.inventario.dto.CrearInventarioRequest;
 import com.connectshopp.inventario.dto.MovimientoInventarioRequest;
 import com.connectshopp.inventario.exception.BusinessException;
@@ -7,10 +13,6 @@ import com.connectshopp.inventario.exception.ResourceNotFoundException;
 import com.connectshopp.inventario.model.Inventario;
 import com.connectshopp.inventario.model.MovimientoInventario;
 import com.connectshopp.inventario.repository.InventarioRepository;
-import java.util.List;
-import java.util.Set;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InventarioService {
@@ -28,41 +30,41 @@ public class InventarioService {
 
     @Transactional
     public Inventario crear(CrearInventarioRequest request) {
-        if (inventarioRepository.existsByProductoId(request.productoId())) {
-            throw new BusinessException("Ya existe inventario para el producto " + request.productoId());
+        if (inventarioRepository.existsByProductoId(request.getProductoId())) {
+            throw new BusinessException("Ya existe inventario para el producto " + request.getProductoId());
         }
 
         Inventario inventario = new Inventario();
-        inventario.setProductoId(request.productoId());
-        inventario.setStockActual(request.stockActual());
-        inventario.setStockMinimo(request.stockMinimo());
+        inventario.setProductoId(request.getProductoId());
+        inventario.setStockActual(request.getStockActual());
+        inventario.setStockMinimo(request.getStockMinimo());
         return inventarioRepository.save(inventario);
     }
 
     @Transactional
     public MovimientoInventario registrarMovimiento(Long inventarioId, MovimientoInventarioRequest request) {
         Inventario inventario = buscarPorId(inventarioId);
-        String tipo = request.tipo().toUpperCase();
+        String tipo = request.getTipo().toUpperCase();
 
         if (!TIPOS_VALIDOS.contains(tipo)) {
-            throw new BusinessException("Tipo de movimiento invalido: " + request.tipo());
+            throw new BusinessException("Tipo de movimiento invalido: " + request.getTipo());
         }
 
-        if (SALIDA.equals(tipo) && inventario.getStockActual() < request.cantidad()) {
+        if (SALIDA.equals(tipo) && inventario.getStockActual() < request.getCantidad()) {
             throw new BusinessException("Stock insuficiente para realizar salida");
         }
 
-        if (ENTRADA.equals(tipo)) {
-            inventario.setStockActual(inventario.getStockActual() + request.cantidad());
-        } else if (SALIDA.equals(tipo)) {
-            inventario.setStockActual(inventario.getStockActual() - request.cantidad());
-        } else {
-            inventario.setStockActual(request.cantidad());
+        switch (tipo) {
+            case ENTRADA -> inventario.setStockActual(inventario.getStockActual() + request.getCantidad());
+            case SALIDA -> inventario.setStockActual(inventario.getStockActual() - request.getCantidad());
+            case AJUSTE -> inventario.setStockActual(request.getCantidad());
+            default -> {
+            }
         }
 
         MovimientoInventario movimiento = new MovimientoInventario();
         movimiento.setTipo(tipo);
-        movimiento.setCantidad(request.cantidad());
+        movimiento.setCantidad(request.getCantidad());
         inventario.agregarMovimiento(movimiento);
 
         inventarioRepository.save(inventario);

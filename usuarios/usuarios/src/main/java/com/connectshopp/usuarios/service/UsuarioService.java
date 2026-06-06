@@ -1,5 +1,10 @@
 package com.connectshopp.usuarios.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.connectshopp.usuarios.dto.DireccionRequest;
 import com.connectshopp.usuarios.exception.BusinessException;
 import com.connectshopp.usuarios.exception.ResourceNotFoundException;
@@ -8,9 +13,6 @@ import com.connectshopp.usuarios.model.RolUsuario;
 import com.connectshopp.usuarios.model.Usuario;
 import com.connectshopp.usuarios.repository.RolUsuarioRepository;
 import com.connectshopp.usuarios.repository.UsuarioRepository;
-import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioService {
@@ -40,9 +42,9 @@ public class UsuarioService {
         Usuario usuario = buscarPorId(usuarioId);
 
         Direccion direccion = new Direccion();
-        direccion.setCalle(request.calle());
-        direccion.setCiudad(request.ciudad());
-        direccion.setRegion(request.region());
+        direccion.setCalle(request.getCalle());
+        direccion.setCiudad(request.getCiudad());
+        direccion.setRegion(request.getRegion());
 
         usuario.agregarDireccion(direccion);
         usuarioRepository.save(usuario);

@@ -56,27 +56,27 @@ public class PedidoService {
 
     @Transactional
     public Pedido crear(CrearPedidoRequest request) {
-        usuarioClient.validarUsuarioActivo(request.usuarioId());
+        usuarioClient.validarUsuarioActivo(request.getUsuarioId());
 
         EstadoPedido estado = estadoPedidoRepository.findByNombreIgnoreCase(ESTADO_INICIAL)
             .orElseThrow(() -> new ResourceNotFoundException("Estado inicial PENDIENTE no encontrado"));
 
         Pedido pedido = new Pedido();
-        pedido.setUsuarioId(request.usuarioId());
+        pedido.setUsuarioId(request.getUsuarioId());
         pedido.setEstado(estado);
 
         BigDecimal total = BigDecimal.ZERO;
-        for (DetallePedidoRequest item : request.detalles()) {
-            ProductoInfo producto = productoClient.buscarProducto(item.productoId());
-            InventarioClient.InventarioInfo inventario = inventarioClient.buscarPorProductoId(item.productoId());
+        for (DetallePedidoRequest item : request.getDetalles()) {
+            ProductoInfo producto = productoClient.buscarProducto(item.getProductoId());
+            InventarioClient.InventarioInfo inventario = inventarioClient.buscarPorProductoId(item.getProductoId());
             validarStockDisponible(item, inventario);
 
             DetallePedido detalle = new DetallePedido();
             detalle.setProductoId(producto.id());
-            detalle.setCantidad(item.cantidad());
+            detalle.setCantidad(item.getCantidad());
             detalle.setPrecioUnit(producto.precio());
             pedido.agregarDetalle(detalle);
-            total = total.add(producto.precio().multiply(BigDecimal.valueOf(item.cantidad())));
+            total = total.add(producto.precio().multiply(BigDecimal.valueOf(item.getCantidad())));
         }
 
         pedido.setTotal(total);
@@ -87,13 +87,13 @@ public class PedidoService {
             inventarioClient.descontarStock(inventario.id(), detalle.getCantidad());
         }
 
-        pagoClient.crearPago(request.metodoPagoId(), pedidoGuardado.getId(), pedidoGuardado.getTotal());
+        pagoClient.crearPago(request.getMetodoPagoId(), pedidoGuardado.getId(), pedidoGuardado.getTotal());
         return pedidoGuardado;
     }
 
     private void validarStockDisponible(DetallePedidoRequest item, InventarioClient.InventarioInfo inventario) {
-        if (inventario.stockActual() < item.cantidad()) {
-            throw new BusinessException("Stock insuficiente para producto " + item.productoId());
+        if (inventario.stockActual() < item.getCantidad()) {
+            throw new BusinessException("Stock insuficiente para producto " + item.getProductoId());
         }
     }
 
