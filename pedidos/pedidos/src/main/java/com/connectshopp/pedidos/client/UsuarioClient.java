@@ -1,6 +1,5 @@
 package com.connectshopp.pedidos.client;
 
-import com.connectshopp.pedidos.exception.BusinessException;
 import com.connectshopp.pedidos.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,13 +26,13 @@ public class UsuarioClient {
                 throw new ResourceNotFoundException("Usuario no encontrado");
             }
             if (!Boolean.TRUE.equals(usuario.activo())) {
-                throw new BusinessException("Usuario inactivo");
+                throw new IllegalStateException("Usuario inactivo");
             }
         } catch (RestClientResponseException ex) {
             if (ex.getStatusCode().is4xxClientError()) {
                 throw new ResourceNotFoundException("Usuario no encontrado");
             }
-            throw new BusinessException("No se pudo validar el usuario");
+            throw new IllegalStateException("No se pudo validar el usuario");
         }
     }
 

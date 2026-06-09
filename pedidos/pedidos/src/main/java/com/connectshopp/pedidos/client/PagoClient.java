@@ -1,6 +1,5 @@
 package com.connectshopp.pedidos.client;
 
-import com.connectshopp.pedidos.exception.BusinessException;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,9 +27,9 @@ public class PagoClient {
                 .toBodilessEntity();
         } catch (RestClientResponseException ex) {
             if (ex.getStatusCode().is4xxClientError()) {
-                throw new BusinessException("No se pudo crear el pago para el pedido");
+                throw new IllegalStateException("No se pudo crear el pago para el pedido");
             }
-            throw new BusinessException("Servicio de pagos no disponible");
+            throw new IllegalStateException("Servicio de pagos no disponible");
         }
     }
 

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.connectshopp.usuarios.dto.DireccionRequest;
-import com.connectshopp.usuarios.exception.BusinessException;
 import com.connectshopp.usuarios.exception.ResourceNotFoundException;
 import com.connectshopp.usuarios.model.Direccion;
 import com.connectshopp.usuarios.model.RolUsuario;
@@ -28,7 +27,7 @@ public class UsuarioService {
     @Transactional
     public Usuario crear(Long rolId, Usuario usuario) {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-            throw new BusinessException("Ya existe un usuario con el email " + usuario.getEmail());
+            throw new IllegalArgumentException("Ya existe un usuario con el email " + usuario.getEmail());
         }
 
         RolUsuario rol = rolUsuarioRepository.findById(rolId)

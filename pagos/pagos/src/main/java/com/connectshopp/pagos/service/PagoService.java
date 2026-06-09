@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.connectshopp.pagos.dto.CrearPagoRequest;
-import com.connectshopp.pagos.exception.BusinessException;
 import com.connectshopp.pagos.exception.ResourceNotFoundException;
 import com.connectshopp.pagos.model.MetodoPago;
 import com.connectshopp.pagos.model.Pago;
@@ -32,13 +31,13 @@ public class PagoService {
     @Transactional
     public Pago procesar(Long metodoId, CrearPagoRequest request) {
         if (request.getPedidoId() <= 0) {
-            throw new BusinessException("pedidoId debe ser mayor que cero");
+            throw new IllegalArgumentException("pedidoId debe ser mayor que cero");
         }
 
         MetodoPago metodo = metodoPagoRepository.findById(metodoId)
             .orElseThrow(() -> new ResourceNotFoundException("Metodo de pago no encontrado"));
         if (!Boolean.TRUE.equals(metodo.getActivo())) {
-            throw new BusinessException("Metodo de pago inactivo");
+            throw new IllegalStateException("Metodo de pago inactivo");
         }
 
         Pago pago = new Pago();
@@ -60,7 +59,7 @@ public class PagoService {
         Pago pago = buscarPorId(pagoId);
         String nuevoEstado = estado.toUpperCase();
         if (!ESTADOS_VALIDOS.contains(nuevoEstado)) {
-            throw new BusinessException("Estado de pago invalido: " + estado);
+            throw new IllegalArgumentException("Estado de pago invalido: " + estado);
         }
 
         pago.setEstado(nuevoEstado);

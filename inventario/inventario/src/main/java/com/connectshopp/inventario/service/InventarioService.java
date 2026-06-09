@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.connectshopp.inventario.dto.CrearInventarioRequest;
 import com.connectshopp.inventario.dto.MovimientoInventarioRequest;
-import com.connectshopp.inventario.exception.BusinessException;
 import com.connectshopp.inventario.exception.ResourceNotFoundException;
 import com.connectshopp.inventario.model.Inventario;
 import com.connectshopp.inventario.model.MovimientoInventario;
@@ -31,7 +30,7 @@ public class InventarioService {
     @Transactional
     public Inventario crear(CrearInventarioRequest request) {
         if (inventarioRepository.existsByProductoId(request.getProductoId())) {
-            throw new BusinessException("Ya existe inventario para el producto " + request.getProductoId());
+            throw new IllegalArgumentException("Ya existe inventario para el producto " + request.getProductoId());
         }
 
         Inventario inventario = new Inventario();
@@ -47,11 +46,11 @@ public class InventarioService {
         String tipo = request.getTipo().toUpperCase();
 
         if (!TIPOS_VALIDOS.contains(tipo)) {
-            throw new BusinessException("Tipo de movimiento invalido: " + request.getTipo());
+            throw new IllegalArgumentException("Tipo de movimiento invalido: " + request.getTipo());
         }
 
         if (SALIDA.equals(tipo) && inventario.getStockActual() < request.getCantidad()) {
-            throw new BusinessException("Stock insuficiente para realizar salida");
+            throw new IllegalStateException("Stock insuficiente para realizar salida");
         }
 
         switch (tipo) {

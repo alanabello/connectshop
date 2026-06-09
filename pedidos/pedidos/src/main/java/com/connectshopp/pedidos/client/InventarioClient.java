@@ -1,6 +1,5 @@
 package com.connectshopp.pedidos.client;
 
-import com.connectshopp.pedidos.exception.BusinessException;
 import com.connectshopp.pedidos.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class InventarioClient {
             if (ex.getStatusCode().is4xxClientError()) {
                 throw new ResourceNotFoundException("Inventario no encontrado para producto " + productoId);
             }
-            throw new BusinessException("No se pudo consultar inventario");
+            throw new IllegalStateException("No se pudo consultar inventario");
         }
     }
 
@@ -46,9 +45,9 @@ public class InventarioClient {
                 .toBodilessEntity();
         } catch (RestClientResponseException ex) {
             if (ex.getStatusCode().is4xxClientError()) {
-                throw new BusinessException("Stock insuficiente o movimiento invalido");
+                throw new IllegalStateException("Stock insuficiente o movimiento invalido");
             }
-            throw new BusinessException("No se pudo descontar inventario");
+            throw new IllegalStateException("No se pudo descontar inventario");
         }
     }
 

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.connectshopp.productos.dto.ImagenProductoRequest;
-import com.connectshopp.productos.exception.BusinessException;
 import com.connectshopp.productos.exception.ResourceNotFoundException;
 import com.connectshopp.productos.model.Categoria;
 import com.connectshopp.productos.model.ImagenProducto;
@@ -37,10 +36,10 @@ public class ProductoService {
     @Transactional
     public Producto crear(Long categoriaId, Long marcaId, Producto producto) {
         if (productoRepository.existsBySku(producto.getSku())) {
-            throw new BusinessException("Ya existe un producto con el SKU " + producto.getSku());
+            throw new IllegalArgumentException("Ya existe un producto con el SKU " + producto.getSku());
         }
         if (producto.getStock() != null && producto.getStock() < 0) {
-            throw new BusinessException("El stock no puede ser negativo");
+            throw new IllegalArgumentException("El stock no puede ser negativo");
         }
 
         Categoria categoria = categoriaRepository.findById(categoriaId)

@@ -7,7 +7,6 @@ import com.connectshopp.pedidos.client.ProductoClient.ProductoInfo;
 import com.connectshopp.pedidos.client.UsuarioClient;
 import com.connectshopp.pedidos.dto.CrearPedidoRequest;
 import com.connectshopp.pedidos.dto.DetallePedidoRequest;
-import com.connectshopp.pedidos.exception.BusinessException;
 import com.connectshopp.pedidos.exception.ResourceNotFoundException;
 import com.connectshopp.pedidos.model.DetallePedido;
 import com.connectshopp.pedidos.model.EstadoPedido;
@@ -93,7 +92,7 @@ public class PedidoService {
 
     private void validarStockDisponible(DetallePedidoRequest item, InventarioClient.InventarioInfo inventario) {
         if (inventario.stockActual() < item.getCantidad()) {
-            throw new BusinessException("Stock insuficiente para producto " + item.getProductoId());
+            throw new IllegalStateException("Stock insuficiente para producto " + item.getProductoId());
         }
     }
 
@@ -106,7 +105,7 @@ public class PedidoService {
         String actual = pedido.getEstado().getNombre().toUpperCase();
         String nuevo = nuevoEstado.getNombre().toUpperCase();
         if (!TRANSICIONES.getOrDefault(actual, Set.of()).contains(nuevo)) {
-            throw new BusinessException("Transicion de estado no permitida: " + actual + " -> " + nuevo);
+            throw new IllegalStateException("Transicion de estado no permitida: " + actual + " -> " + nuevo);
         }
 
         pedido.setEstado(nuevoEstado);

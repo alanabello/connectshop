@@ -1,6 +1,5 @@
 package com.connectshopp.pedidos.client;
 
-import com.connectshopp.pedidos.exception.BusinessException;
 import com.connectshopp.pedidos.exception.ResourceNotFoundException;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +31,7 @@ public class ProductoClient {
             if (ex.getStatusCode().is4xxClientError()) {
                 throw new ResourceNotFoundException("Producto no encontrado");
             }
-            throw new BusinessException("No se pudo consultar el producto");
+            throw new IllegalStateException("No se pudo consultar el producto");
         }
     }
 
