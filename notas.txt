@@ -221,4 +221,81 @@ Definir estructuras de respuesta (DTOs)
 Mostrar ejemplos en Swagger UI
 Facilitar la comprensión del consumo de la API
 
+en dto 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public class MiDto {
+
+    @Schema(description = "Descripción del campo", example = "10")
+    private Integer cantidad;
+}
+
+1. ¿Qué hace el Controller?
+
+Es la “puerta de entrada” de tu API.
+
+Recibe las peticiones (POST, GET, PUT, DELETE)
+Llama a la lógica del sistema (service)
+Devuelve una respuesta
+
+👉 Es donde defines las rutas tipo: /api/productos
+
+2. ¿Qué hace el DTO?
+
+Es un “contenedor de datos”.
+
+Hay dos tipos:
+
+DTO de entrada → lo que el cliente envía (request)
+DTO de salida → lo que tú devuelves (response)
+
+👉 Sirve para NO exponer tus entidades directamente.
+
+3. ¿Cómo se conectan Controller y DTO?
+
+El Controller:
+
+Recibe un DTO de entrada
+Devuelve un DTO de salida
+
+👉 Esa es la “conexión” entre ambos.
+
+No se amarra con configuración especial, solo por uso.
+
+4. ¿Qué es @Schema?
+
+Es una anotación de documentación.
+
+Sirve para:
+
+Describir campos del DTO
+Poner ejemplos
+Mejorar Swagger / OpenAPI
+
+👉 Solo afecta la documentación, NO la lógica.
+
+5. ¿Dónde va el “example”?
+
+Va dentro del DTO, en cada campo.
+
+Sirve para que Swagger muestre ejemplos reales.
+
+6. ¿Qué hace Maven con Swagger?
+
+Cuando agregas la dependencia correcta:
+
+Se activa Swagger UI automáticamente
+Genera documentación desde tus Controllers y DTOs
+Expone endpoints de documentación
+7. Flujo completo mental
+Cliente llama API
+Controller recibe datos (DTO)
+Controller pasa a lógica interna
+Respuesta vuelve en otro DTO
+Swagger documenta todo usando DTO + Controller
+Idea clave
+Controller = rutas
+DTO = datos
+Schema = documentación
+Maven = activa Swagger
 
