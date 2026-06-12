@@ -1,0 +1,224 @@
+Documentación de APIs REST con Swagger/OpenAPI
+🧩 Implementación de Swagger/OpenAPI
+
+Swagger/OpenAPI permite generar automáticamente la documentación de una API REST.
+
+Esta herramienta analiza los controladores de la aplicación, identifica las anotaciones presentes en cada endpoint y construye una documentación interactiva de la API.
+
+A partir de estas anotaciones, OpenAPI asocia cada ruta HTTP con sus respectivos DTOs de entrada y salida, parámetros, códigos de respuesta y descripciones, permitiendo
+ visualizar y probar los servicios desde una interfaz web amigable.
+
+⚙️ Configuración del proyecto
+🔹 Paso 1: Agregar dependencias
+
+Para habilitar Swagger en Spring Boot, se agrega la dependencia de OpenAPI en el archivo pom.xml.
+
+Esta dependencia permite:
+
+Generar documentación automática
+Exponer Swagger UI
+Analizar controladores y DTOs
+🧱 Clases de configuración
+
+Dentro del paquete config se incorporan clases necesarias para el funcionamiento del sistema y la documentación.
+
+🔷 OpenApiConfig
+
+La clase OpenApiConfig contiene la configuración general de Swagger/OpenAPI.
+
+En ella se define:
+
+Nombre del microservicio
+Versión
+Descripción
+Información de contacto
+Licencia
+Servidores (ej: http://localhost:8082)
+
+Esto permite definir el contexto de la API y desde dónde se consume.
+
+🔷 RestTemplateConfig
+
+La clase RestTemplateConfig configura el cliente HTTP de Spring.
+
+Permite la comunicación entre microservicios dentro de la arquitectura, facilitando el consumo de otras APIs.
+
+🧾 Arquitectura de controladores
+⚠️ Importante
+
+Debe existir un solo controlador principal por microservicio.
+
+Este controlador centraliza todas las operaciones del dominio (por ejemplo: pedidos).
+
+Los DTOs se utilizan para manejar:
+
+Entradas (requests)
+Salidas (responses)
+📌 Documentación de controladores
+🔹 Anotación @Tag (nivel controlador)
+
+Se utiliza para agrupar el módulo completo:
+
+Nombre del módulo (ejemplo: Pedidos)
+Descripción general del microservicio
+🔹 Anotación @Operation (nivel endpoint)
+
+Cada endpoint debe documentarse individualmente.
+
+Permite definir:
+
+Summary (qué hace el endpoint)
+Description (detalle específico de la operación)
+
+Ejemplo conceptual:
+
+“Listar todos los pedidos”
+“Crear un nuevo pedido”
+“Eliminar un pedido por ID”
+🧩 Anotaciones más utilizadas
+@Operation → describe cada endpoint individual
+@ApiResponse / @ApiResponses → define respuestas HTTP
+@Parameter → documenta parámetros de entrada
+@Schema → describe DTOs
+🚀 Generación automática de la documentación
+🔹 Paso 2: Levantar la aplicación
+
+Al iniciar la aplicación, OpenAPI:
+
+Analiza el único controlador del microservicio
+Detecta los endpoints
+Lee anotaciones de documentación
+Identifica DTOs de entrada y salida
+Asocia códigos de respuesta HTTP
+
+Luego genera la documentación en Swagger UI.
+
+🌐 Información disponible en Swagger UI
+
+La interfaz muestra:
+
+Endpoints disponibles
+URLs de cada servicio
+Descripción de cada operación
+Parámetros de entrada
+DTOs de request y response
+Estructura de datos
+Ejemplos de peticiones y respuestas
+Códigos HTTP
+📌 Códigos de respuesta comunes
+200 OK
+201 Created
+400 Bad Request
+401 Unauthorized
+404 Not Found
+500 Internal Server Error
+📥 Ejemplo conceptual de datos
+🔹 Entrada (Request)
+ID del cliente
+ID del producto
+Cantidad solicitada
+🔹 Salida (Response)
+ID del pedido generado
+Datos del cliente
+Datos del producto
+Cantidad
+Estado del pedido (PENDIENTE, CONFIRMADO, CANCELADO)
+🧠 Funcionamiento de Swagger/OpenAPI
+
+Swagger realiza automáticamente:
+
+Análisis del controlador principal
+Detección de endpoints
+Lectura de anotaciones (@Tag, @Operation)
+Identificación de DTOs
+Asociación de respuestas HTTP
+Generación de documentación interactiva
+🎯 Resultado final
+
+Al ejecutar la aplicación, Swagger genera una interfaz web donde se puede:
+
+Ver todos los endpoints
+Entender cada API
+Visualizar entradas y salidas
+Probar servicios en tiempo real
+Validar respuestas HTTP
+🏁 Conclusión
+
+Swagger/OpenAPI mantiene la documentación sincronizada con el código fuente, facilitando el desarrollo de microservicios, mejorando la comprensión de la API y 
+permitiendo pruebas rápidas sin necesidad de herramientas externas.
+
+api response
+responsecode = "200"
+Description=lista de reservas de pedidos
+content @ content(
+    mediatype = ""
+)
+
+Operation
+Respuestas de la API (ApiResponse)
+
+En Swagger/OpenAPI, cada endpoint debe documentar claramente las posibles respuestas que puede devolver la API.
+
+Esto se realiza mediante la anotación de respuesta de operación, donde se definen:
+
+Código HTTP de respuesta
+Descripción del resultado
+Tipo de contenido (JSON)
+Estructura del cuerpo de respuesta (DTO)
+🔹 Ejemplo conceptual de respuesta
+
+Para un endpoint como “Listar reservas de pedidos”, la documentación sería:
+
+Response Code: 200
+Description: Lista de reservas de pedidos
+Content-Type: application/json
+Contenido: Lista de objetos tipo PedidoDTO
+🧩 Estructura de una respuesta documentada
+
+Cada respuesta en Swagger incluye:
+
+Código de estado HTTP (200, 400, 404, etc.)
+Descripción del resultado
+Tipo de contenido (application/json)
+Esquema del DTO de salida
+📌 Ejemplo conceptual de operación (Operation)
+
+Cada endpoint debe estar documentado con una operación que describa su comportamiento.
+
+Incluye:
+
+Summary: descripción corta del endpoint
+Description: explicación detallada de la operación
+Responses: posibles respuestas HTTP
+🔹 Ejemplo conceptual
+
+Operación:
+
+“Listar todas las reservas de pedidos”
+
+Respuesta esperada:
+
+Código: 200
+Descripción: Lista de reservas de pedidos disponibles en el sistema
+Tipo de contenido: JSON
+Estructura: Lista de DTOs de pedidos
+🧠 Estructura general de documentación de respuesta
+
+En Swagger/OpenAPI, una respuesta se define con:
+
+Código de respuesta (responseCode)
+Descripción (description)
+Contenido (content)
+Tipo de medio (mediaType, por ejemplo: application/json)
+Esquema del objeto devuelto (schema o DTO)
+🎯 Resultado final
+
+Gracias a esta configuración, Swagger permite:
+
+Documentar claramente lo que devuelve cada endpoint
+Especificar códigos HTTP reales del sistema
+Definir estructuras de respuesta (DTOs)
+Mostrar ejemplos en Swagger UI
+Facilitar la comprensión del consumo de la API
+
+
