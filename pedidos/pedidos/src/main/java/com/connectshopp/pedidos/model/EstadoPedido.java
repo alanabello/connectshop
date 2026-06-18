@@ -1,6 +1,7 @@
 package com.connectshopp.pedidos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,18 +20,22 @@ import java.util.List;
     name = "estados_pedido",
     uniqueConstraints = @UniqueConstraint(name = "uk_estados_pedido_nombre", columnNames = "nombre")
 )
+@Schema(description = "Estado disponible para un pedido")
 public class EstadoPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del estado", example = "1")
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 50)
     @NotBlank
+    @Schema(description = "Nombre del estado", example = "PENDIENTE")
     private String nombre;
 
     @Column(name = "descripcion", length = 255)
+    @Schema(description = "Descripcion del estado", example = "Pedido creado y pendiente de confirmacion")
     private String descripcion;
 
     @OneToMany(mappedBy = "estado", cascade = CascadeType.PERSIST)

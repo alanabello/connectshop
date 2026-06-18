@@ -1,6 +1,7 @@
 package com.connectshopp.inventario.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,23 +18,28 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movimientos_inventario")
+@Schema(description = "Movimiento de entrada o salida de inventario")
 public class MovimientoInventario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del movimiento", example = "1")
     private Long id;
 
     @Column(name = "tipo", nullable = false, length = 30)
     @NotBlank
+    @Schema(description = "Tipo de movimiento", example = "SALIDA")
     private String tipo;
 
     @Column(name = "cantidad", nullable = false)
     @NotNull
     @Min(0)
+    @Schema(description = "Cantidad de unidades del movimiento", example = "2")
     private Integer cantidad;
 
     @Column(name = "fecha_movimiento", nullable = false)
+    @Schema(description = "Fecha y hora en que se registro el movimiento", example = "2026-06-17T10:30:00")
     private LocalDateTime fechaMovimiento = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -1,5 +1,6 @@
 package com.connectshopp.usuarios.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,35 +24,43 @@ import java.util.List;
     name = "usuarios",
     uniqueConstraints = @UniqueConstraint(name = "uk_usuarios_email", columnNames = "email")
 )
+@Schema(description = "Usuario registrado en ConnectShop")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del usuario", example = "1")
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 120)
     @NotBlank
+    @Schema(description = "Nombre completo del usuario", example = "Ana Perez")
     private String nombre;
 
     @Column(name = "email", nullable = false, length = 150)
     @NotBlank
     @Email
+    @Schema(description = "Correo electronico unico del usuario", example = "ana@connectshop.local")
     private String email;
 
     @Column(name = "password", nullable = false, length = 255)
     @NotBlank
+    @Schema(description = "Password del usuario", example = "Secreto123")
     private String password;
 
     @Column(name = "activo", nullable = false)
     @NotNull
+    @Schema(description = "Indica si el usuario esta activo", example = "true")
     private Boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rol_id", nullable = false)
+    @Schema(description = "Rol asignado al usuario")
     private RolUsuario rol;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Direcciones registradas del usuario")
     private List<Direccion> direcciones = new ArrayList<>();
 
     public Usuario() {

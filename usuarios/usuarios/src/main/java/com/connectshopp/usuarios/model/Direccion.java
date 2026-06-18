@@ -1,6 +1,7 @@
 package com.connectshopp.usuarios.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,23 +15,28 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "direcciones")
+@Schema(description = "Direccion asociada a un usuario")
 public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID de la direccion", example = "1")
     private Long id;
 
     @Column(name = "calle", nullable = false, length = 150)
     @NotBlank
+    @Schema(description = "Calle y numero", example = "Av. Providencia 1234")
     private String calle;
 
     @Column(name = "ciudad", nullable = false, length = 80)
     @NotBlank
+    @Schema(description = "Ciudad", example = "Santiago")
     private String ciudad;
 
     @Column(name = "region", nullable = false, length = 80)
     @NotBlank
+    @Schema(description = "Region", example = "Metropolitana")
     private String region;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

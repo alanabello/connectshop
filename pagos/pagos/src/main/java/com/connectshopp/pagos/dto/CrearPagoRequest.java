@@ -2,16 +2,20 @@ package com.connectshopp.pagos.dto;
 
 import java.math.BigDecimal;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+@Schema(description = "Datos necesarios para procesar un pago")
 public class CrearPagoRequest {
     @NotNull
     @Positive
+    @Schema(description = "ID del pedido que sera pagado", example = "15")
     private Long pedidoId;
     @NotNull
     @DecimalMin("0.01")
+    @Schema(description = "Monto total del pago", example = "45990.00")
     private BigDecimal monto;
 
     public CrearPagoRequest() {

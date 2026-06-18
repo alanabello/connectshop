@@ -1,6 +1,7 @@
 package com.connectshopp.pedidos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,26 +19,31 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "detalles_pedido")
+@Schema(description = "Linea de detalle de un pedido")
 public class DetallePedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del detalle", example = "1")
     private Long id;
 
     @Column(name = "cantidad", nullable = false)
     @NotNull
     @Min(1)
+    @Schema(description = "Cantidad comprada", example = "2")
     private Integer cantidad;
 
     @Column(name = "precio_unit", nullable = false, precision = 12, scale = 2)
     @NotNull
     @DecimalMin("0.01")
+    @Schema(description = "Precio unitario aplicado", example = "12990.00")
     private BigDecimal precioUnit;
 
     @Column(name = "producto_id", nullable = false)
     @NotNull
     @Positive
+    @Schema(description = "ID del producto comprado", example = "10")
     private Long productoId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -1,5 +1,6 @@
 package com.connectshopp.pedidos.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,31 +22,38 @@ import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
+@Schema(description = "Pedido realizado por un usuario")
 public class Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del pedido", example = "1")
     private Long id;
 
     @Column(name = "fecha_pedido", nullable = false)
+    @Schema(description = "Fecha y hora de creacion del pedido", example = "2026-06-17T10:30:00")
     private LocalDateTime fechaPedido = LocalDateTime.now();
 
     @Column(name = "total", nullable = false, precision = 12, scale = 2)
     @NotNull
     @DecimalMin("0.00")
+    @Schema(description = "Total calculado del pedido", example = "25980.00")
     private BigDecimal total = BigDecimal.ZERO;
 
     @Column(name = "usuario_id", nullable = false)
     @NotNull
     @Positive
+    @Schema(description = "ID del usuario que realizo el pedido", example = "1")
     private Long usuarioId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "estado_id", nullable = false)
+    @Schema(description = "Estado actual del pedido")
     private EstadoPedido estado;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Detalle de productos del pedido")
     private List<DetallePedido> detalles = new ArrayList<>();
 
     public Pedido() {

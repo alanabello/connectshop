@@ -1,5 +1,6 @@
 package com.connectshopp.productos.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,40 +26,49 @@ import java.util.List;
     name = "productos",
     uniqueConstraints = @UniqueConstraint(name = "uk_productos_sku", columnNames = "sku")
 )
+@Schema(description = "Producto del catalogo")
 public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del producto", example = "10")
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 120)
     @NotBlank
+    @Schema(description = "Nombre comercial del producto", example = "Notebook Pro 14")
     private String nombre;
 
     @Column(name = "precio", nullable = false, precision = 12, scale = 2)
     @NotNull
     @DecimalMin("0.01")
+    @Schema(description = "Precio de venta del producto", example = "799990.00")
     private BigDecimal precio;
 
     @Column(name = "stock", nullable = false)
     @NotNull
     @Min(0)
+    @Schema(description = "Stock disponible del producto", example = "12")
     private Integer stock = 0;
 
     @Column(name = "sku", nullable = false, length = 50)
     @NotBlank
+    @Schema(description = "Codigo SKU unico del producto", example = "NB-PRO-14")
     private String sku;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoria_id", nullable = false)
+    @Schema(description = "Categoria asociada al producto")
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "marca_id", nullable = false)
+    @Schema(description = "Marca asociada al producto")
     private Marca marca;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Schema(description = "Imagenes registradas para el producto")
     private List<ImagenProducto> imagenes = new ArrayList<>();
 
     public Producto() {

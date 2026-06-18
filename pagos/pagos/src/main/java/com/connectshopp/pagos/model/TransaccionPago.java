@@ -1,6 +1,7 @@
 package com.connectshopp.pagos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,21 +16,26 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transacciones_pago")
+@Schema(description = "Transaccion registrada durante el procesamiento de un pago")
 public class TransaccionPago {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID de la transaccion", example = "1")
     private Long id;
 
     @Column(name = "estado", nullable = false, length = 30)
     @NotBlank
+    @Schema(description = "Estado de la transaccion", example = "APROBADA")
     private String estado;
 
     @Column(name = "mensaje", length = 255)
+    @Schema(description = "Mensaje asociado al resultado de la transaccion", example = "Pago aprobado por el emisor")
     private String mensaje;
 
     @Column(name = "fecha_transaccion", nullable = false)
+    @Schema(description = "Fecha y hora de la transaccion", example = "2026-06-17T10:30:00")
     private LocalDateTime fechaTransaccion = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

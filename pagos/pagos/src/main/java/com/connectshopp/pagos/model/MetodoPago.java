@@ -1,6 +1,7 @@
 package com.connectshopp.pagos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,19 +21,23 @@ import java.util.List;
     name = "metodos_pago",
     uniqueConstraints = @UniqueConstraint(name = "uk_metodos_pago_nombre", columnNames = "nombre")
 )
+@Schema(description = "Metodo de pago disponible")
 public class MetodoPago {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Schema(description = "ID del metodo de pago", example = "1")
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 80)
     @NotBlank
+    @Schema(description = "Nombre del metodo de pago", example = "Tarjeta de credito")
     private String nombre;
 
     @Column(name = "activo", nullable = false)
     @NotNull
+    @Schema(description = "Indica si el metodo de pago esta activo", example = "true")
     private Boolean activo = true;
 
     @OneToMany(mappedBy = "metodoPago", cascade = CascadeType.PERSIST)
