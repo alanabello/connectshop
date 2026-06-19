@@ -1,0 +1,5 @@
+com\connectshopp\gateway\controller\DocsController.class
+com\connectshopp\gateway\GatewayApplication.class
+com\connectshopp\gateway\config\RestTemplateConfig.class
+com\connectshopp\gateway\controller\GatewayProxyController.class
+com\connectshopp\gateway\config\ServiceUrlProperties.class

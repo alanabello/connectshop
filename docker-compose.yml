@@ -1,4 +1,24 @@
 services:
+  gateway:
+    build:
+      context: ./gateway/gateway
+    container_name: api-gateway
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      PRODUCTOS_SERVICE_URL: http://productos:8081
+      USUARIOS_SERVICE_URL: http://usuarios:8082
+      PEDIDOS_SERVICE_URL: http://pedidos:8083
+      INVENTARIO_SERVICE_URL: http://inventario:8084
+      PAGOS_SERVICE_URL: http://pagos:8085
+    depends_on:
+      - productos
+      - usuarios
+      - pedidos
+      - inventario
+      - pagos
+
   productos:
     build:
       context: ./productos/productos
